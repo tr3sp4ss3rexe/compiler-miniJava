@@ -27,10 +27,10 @@ public:
     std::vector<Symbol> parameters; // If it's a method, its parameter list
     int lineOfDeclaration;
 
-    // Default constructor
+    
     Symbol() : kind(SymbolKind::Variable), name(""), type("") {}
 
-    // User-defined constructor
+    
     Symbol(std::string name, SymbolKind kind, std::string type, std::vector<Symbol> parameters, int lineOfDeclaration)
     : name(name), kind(kind), type(type), parameters(parameters), lineOfDeclaration(lineOfDeclaration)  {}
 
@@ -43,36 +43,36 @@ public:
     std::string scopeName;  // Name of the scope (e.g., "global", a class name, or a method name)
     Scope* parent;          // Pointer to the parent scope
 
-    // Constructor for Scope
+    
     Scope(std::string name) : scopeName(name), parent(nullptr) {}
     bool addSymbol(const std::string& name, SymbolKind kind, const std::string& type, const std::vector<Symbol>& parameters, int lineOfDeclaration);
 };
 
-// Class for SymbolTable which handles all scopes and symbols.
-// It stores scopes in a vector and uses a stack to track the current scope.
+
+
 class SymbolTable {
 public:
     std::vector<Scope> scopes;
     std::stack<size_t> currentScopeStack;
-    std::vector<std::pair<std::string, int>> errors;  // Error messages and line numbers
+    std::vector<std::pair<std::string, int>> errors;  
 
 public:
-    // Constructor: initialize with a global scope.
+    
     SymbolTable();
 
-    // Enter a new scope with the given name.
+    
     void enterScope(std::string scopeName);
 
-    // Exit the current scope.
+    
     void exitScope();
 
     void printAllScopes();
 
-    // Add a symbol to the current scope.
+    
     bool addSymbolST(std::string name, SymbolKind kind, std::string type, std::vector<Symbol> parameters, int lineOfDeclaration);
 
 
-    // Find a symbol in all scopes (from innermost to outermost).
+    
     Symbol* findSymbol(std::string name);
 
     void printCurrentScopeStack();
@@ -82,27 +82,27 @@ public:
     // Check if a symbol exists in a specific scope (e.g., in the given class or method scope).
     bool checkSymbolInScope(const std::string& symbolName);
 
-    // Print the symbol table.
+    
     void printTable() const;
 
-    // Get the name of the current scope.
+    
     std::string getCurrentScope() const;
 
-    // Add an error message.
+    
     void addError(const std::string& message, int line);
 
-    // Check if there are errors.
+    
     bool hasErrors() const;
 
-    // Return the errors.
+    
     const std::vector<std::pair<std::string, int>>& getErrors() const;
 
     void printErrors() const;
 };
 
-//
+
 // Other function declarations for semantic analysis:
-//
+
 void performSemanticAnalysis(Node* node, SymbolTable& symbolTable);
 void printSymbolTable(const SymbolTable& symbolTable);
 void printNode(const Node* node);
@@ -156,13 +156,13 @@ Symbol* lookupMethodInClassScope(const std::string& className, const std::string
             // Found the class scope; now look for the method.
             auto it = scope.symbols.find(methodName);
             if (it != scope.symbols.end() && it->second.kind == SymbolKind::Method) {
-                std::cout << "[DEBUG] Found method: '" << methodName 
-                          << "' in class scope: '" << scope.scopeName << "'"  << "With className " << className << std::endl;
+                // std::cout << "[DEBUG] Found method: '" << methodName 
+                             // << "' in class scope: '" << scope.scopeName << "'"  << "With className " << className << std::endl;
                 return const_cast<Symbol*>(&it->second);
             }
         }
     }
-    std::cout << "[DEBUG] Method '" << methodName << "' not found in class scope '" << className << "'" << std::endl;
+    // std::cout << "[DEBUG] Method '" << methodName << "' not found in class scope '" << className << "'" << std::endl;
     return nullptr;
 }
 
@@ -193,7 +193,7 @@ std::string evaluateExpressionType(Node* node, SymbolTable& symbolTable) {
             size_t currentIndex = symbolTable.currentScopeStack.top();
             Scope& currScope = symbolTable.scopes[currentIndex];
             if (currScope.parent != nullptr) {
-                std::cout << "[DEBUG] 'This' evaluated to parent scope: " << currScope.parent->scopeName << std::endl;
+                // std::cout << "[DEBUG] 'This' evaluated to parent scope: " << currScope.parent->scopeName << std::endl;
                 return currScope.parent->scopeName;
             }
         }
@@ -382,8 +382,8 @@ void SymbolTable::enterScope(std::string scopeName) {
         // Iterate through all scopes to find one with matching parent and scopeName.
         for (size_t i = 0; i < scopes.size(); ++i) {
             if (scopes[i].scopeName == scopeName && scopes[i].parent == &parentScope) {
-                std::cout << "Reusing existing scope: " << scopeName
-                          << " (Parent: " << parentScope.scopeName << ")" << std::endl;
+                // std::cout << "Reusing existing scope: " << scopeName
+                        //  << " (Parent: " << parentScope.scopeName << ")" << std::endl;
                 currentScopeStack.push(i);
                 return;
             }
@@ -408,11 +408,11 @@ void SymbolTable::enterScope(std::string scopeName) {
     // Push its index onto the stack.
     currentScopeStack.push(scopes.size() - 1);
     
-    std::cout << "Entering new scope: " << scopeName;
+    // // std::cout << "[DEBUG]ntering new scope: " << scopeName;
     if (!currentScopeStack.empty() && scopes.back().parent) {
-        std::cout << " (Parent: " << scopes.back().parent->scopeName << ")";
+        // std::cout << " (Parent: " << scopes.back().parent->scopeName << ")";
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 }
 
 
@@ -424,7 +424,7 @@ void SymbolTable::enterScope(std::string scopeName) {
 
 void SymbolTable::exitScope() {
     if (!currentScopeStack.empty()) {
-        //std::cout << "Exiting scope: " << scopes[currentScopeStack.top()].scopeName << std::endl; // Log scope exit
+        //// std::cout << "Exiting scope: " << scopes[currentScopeStack.top()].scopeName << std::endl; // Log scope exit
         currentScopeStack.pop();
     }
 }
@@ -446,8 +446,8 @@ void SymbolTable::printAllScopes() {
         } else {
             std::cout << "  Symbols:" << std::endl;
             for (const auto& [name, symbol] : scope.symbols) {
-                std::cout << "    - Name: " << name << ", TypePrintScopes: " << symbol.type 
-                          << ", Kind: " << static_cast<int>(symbol.kind) << std::endl;
+                std::cout << "    - Name: " << name << ", TypePrintScopes: " << symbol.type;
+                       //   << ", Kind: " << static_cast<int>(symbol.kind) << std::endl;
             }
         }
         std::cout << "--------------------------------------" << std::endl;
@@ -470,66 +470,66 @@ void SymbolTable::printCurrentScopeStack() {
 
 Symbol* SymbolTable::findSymbol(std::string name) { //GOOD ONE
     if (currentScopeStack.empty()) {
-        std::cout << "[DEBUG] currentScopeStack is empty. No active scopes available." << std::endl;
+        // std::cout << "[DEBUG] currentScopeStack is empty. No active scopes available." << std::endl;
         return nullptr;  // No active scopes, nothing to search.
     }
 
     // Start from the current scope and move up
     size_t currentScopeIndex = currentScopeStack.top();
     Scope& currentScope = scopes[currentScopeIndex];
-    std::cout << "[DEBUG] Starting search for symbol: '" << name << "' from scope index: " 
-              << currentScopeIndex << " (Scope: " << currentScope.scopeName << ") at address: " 
-              << &currentScope << std::endl;
-              std::cout << " Scope Indexes Here: ";
+    // std::cout << "[DEBUG] Starting search for symbol: '" << name << "' from scope index: " 
+           //   << currentScopeIndex << " (Scope: " << currentScope.scopeName << ") at address: " 
+           //   << &currentScope << std::endl;
+              // std::cout << " Scope Indexes Here: ";
               printCurrentScopeStack();
-              std::cout << endl;
+              // std::cout << endl;
 
     while (true) {
         Scope& currentScope = scopes[currentScopeIndex];
-        std::cout << "[DEBUG] Checking scope: '" << currentScope.scopeName 
-                  << "' (Index: " << currentScopeIndex << ") at address: " 
-                  << &currentScope << std::endl;
+        // std::cout << "[DEBUG] Checking scope: '" << currentScope.scopeName 
+              //    << "' (Index: " << currentScopeIndex << ") at address: " 
+               //   << &currentScope << std::endl;
 
         // Print all symbols in the current scope with details
-        std::cout << "[DEBUG] Symbols in scope '" << currentScope.scopeName << "':" << std::endl;
+        // std::cout << "[DEBUG] Symbols in scope '" << currentScope.scopeName << "':" << std::endl;
         for (const auto& entry : currentScope.symbols) {
-            std::cout << "    Key: " << entry.first 
-                      << ", Name: " << entry.second.name 
-                      << ", Type: " << entry.second.type 
-                      << ", Kind: " << static_cast<int>(entry.second.kind)
-                      << std::endl;
+            // std::cout << "    Key: " << entry.first 
+                             // << ", Name: " << entry.second.name 
+                             // << ", Type: " << entry.second.type 
+                             // << ", Kind: " << static_cast<int>(entry.second.kind)
+                             // << std::endl;
         }
 
         // Check if the symbol exists in the current scope
         auto it = currentScope.symbols.find(name);
         if (it != currentScope.symbols.end()) {
-            std::cout << "[DEBUG] Found symbol: '" << name 
-                      << "' in scope: '" << currentScope.scopeName << "' (Index: " 
-                      << currentScopeIndex << ") at address: " << &currentScope << std::endl;
+            // std::cout << "[DEBUG] Found symbol: '" << name 
+                             // << "' in scope: '" << currentScope.scopeName << "' (Index: " 
+                             // << currentScopeIndex << ") at address: " << &currentScope << std::endl;
             return &(it->second);  // Return pointer to the found symbol
         } else {
-            std::cout << "[DEBUG] Symbol '" << name << "' not found in scope: '" 
-                      << currentScope.scopeName << "'" << std::endl;
+            // std::cout << "[DEBUG] Symbol '" << name << "' not found in scope: '" 
+                             // << currentScope.scopeName << "'" << std::endl;
         }
         
         // If there's no parent, stop searching
         if (!currentScope.parent) {
-            std::cout << "[DEBUG] Scope: '" << currentScope.scopeName 
-                      << "' has no parent. Ending search." << std::endl;
+            // std::cout << "[DEBUG] Scope: '" << currentScope.scopeName 
+                             // << "' has no parent. Ending search." << std::endl;
             break;
         }
         
-        std::cout << "[DEBUG] Moving from scope: '" << currentScope.scopeName 
-                  << "' (address: " << &currentScope << ") to its parent scope." << std::endl;
+        // std::cout << "[DEBUG] Moving from scope: '" << currentScope.scopeName 
+                             // << "' (address: " << &currentScope << ") to its parent scope." << std::endl;
         
         // Move to the parent scope (assuming the parent pointer is within the scopes array)
         size_t parentIndex = currentScope.parent - &scopes[0];  // Convert pointer to index
-        std::cout << "[DEBUG] Parent scope index calculated as: " << parentIndex 
-                  << " (Parent scope address: " << currentScope.parent << ")" << std::endl;
+        // std::cout << "[DEBUG] Parent scope index calculated as: " << parentIndex 
+                             // << " (Parent scope address: " << currentScope.parent << ")" << std::endl;
         currentScopeIndex = parentIndex;
     }
     
-    std::cout << "[DEBUG] Symbol: '" << name << "' not found in any accessible scope." << std::endl;
+    // std::cout << "[DEBUG] Symbol: '" << name << "' not found in any accessible scope." << std::endl;
     return nullptr;  // Symbol not found in any accessible scope
 }
 
@@ -546,7 +546,7 @@ Symbol* SymbolTable::findSymbol(std::string name) { //GOOD ONE
 
 void SymbolTable::printTable() const {
     // Print global scope and classes first
-    std::cout << "Global Scope:" << std::endl;
+    // // std::cout << "[DEBUG]lobal Scope:" << std::endl;
     for (const auto& scope : scopes) {
         if (scope.scopeName == "global") {
             std::cout << "  Scope Address: " << &scope << std::endl;
@@ -559,12 +559,12 @@ void SymbolTable::printTable() const {
     // Print details of each class scope
     for (const auto& scope : scopes) {
         if (scope.scopeName != "global") {
-            std::cout << "\nScope: " << scope.scopeName 
-                      << " at address: " << &scope << std::endl;
+            std::cout << "\nScope: " << scope.scopeName;
+                             // << " at address: " << &scope << std::endl;
             for (const auto& symbol : scope.symbols) {
                 std::string symbolType = (symbol.second.kind == SymbolKind::Variable) ? "Variable" : "Method";
-                std::cout << "  " << symbolType << " - Name: " << symbol.second.name
-                          << ", Type: " << symbol.second.type << std::endl;
+                std::cout << "  " << symbolType << " - Name: " << symbol.second.name;
+                             // << ", Type: " << symbol.second.type << std::endl;
             }
         }
     }
@@ -597,7 +597,7 @@ void printSymbolTable(const SymbolTable& symbolTable) {
 void traverseTree(Node* node, SymbolTable& symbolTable) {
     if (!node) return;
     
-    //std::cout << "Processing node type: " << node->type << " with value: " << node->value << std::endl;
+    //// std::cout << "Processing node type: " << node->type << " with value: " << node->value << std::endl;
 
     if (node->type == "mainClass") {
         auto it = node->children.begin();
@@ -636,8 +636,8 @@ void traverseTree(Node* node, SymbolTable& symbolTable) {
         ++it;
         Node* methodNameNode = *it; // Method name node.
         std::string methodName = methodNameNode->value;
-        std::cout << "[DEBUG TRAVERSE TREE] Found method declaration: '" << methodName 
-                  << "' with return type: '" << returnTypeNode->type << "'" << std::endl;
+        // std::cout << "[DEBUG TRAVERSE TREE] Found method declaration: '" << methodName 
+                             // << "' with return type: '" << returnTypeNode->type << "'" << std::endl;
         
         // Step 1: Add the method symbol to the enclosing class's scope.
         if (!symbolTable.currentScopeStack.empty()) {
@@ -825,9 +825,9 @@ void processParameterList(Node* paramListNode, SymbolTable& symbolTable) {
                                   << std::endl;
                         symbolTable.addError("Already declared parameter", identifierNode->lineno);
                     } else {
-                        std::cout << "[DEBUG] Added parameter '" << paramName 
-                                  << "' of type '" << paramType 
-                                  << "' to method scope." << std::endl;
+                        // std::cout << "[DEBUG] Added parameter '" << paramName 
+                             // << "' of type '" << paramType 
+                             // << "' to method scope." << std::endl;
                     }
                 }
             }
@@ -849,9 +849,9 @@ void performSemanticAnalysis(Node* node, SymbolTable& symbolTable) {
 
     if (!node) return;
 
-    std::cout << "[DEBUG] Entering node: Type='" << node->type
-              << "', Value='" << node->value
-              << "', Line=" << node->lineno << std::endl;
+    // std::cout << "[DEBUG] Entering node: Type='" << node->type
+                             // << "', Value='" << node->value
+                             // << "', Line=" << node->lineno << std::endl;
 
     // New class scope: process classDeclaration or mainClass.
     if (node->type == "classDeclaration" || node->type == "mainClass") {
@@ -877,8 +877,8 @@ void performSemanticAnalysis(Node* node, SymbolTable& symbolTable) {
         ++it;
         Node* methodIdentifierNode = *it; // Method name.
         std::string methodName = methodIdentifierNode->value;
-        std::cout << "[DEBUG SEMANTIC] Found method declaration: '" << methodName 
-                  << "' with return type: '" << returnTypeNode->type << "'" << std::endl;
+        // std::cout << "[DEBUG SEMANTIC] Found method declaration: '" << methodName 
+                             // << "' with return type: '" << returnTypeNode->type << "'" << std::endl;
 
         // Enter the method scope.
         symbolTable.enterScope(methodName);
@@ -910,8 +910,8 @@ void performSemanticAnalysis(Node* node, SymbolTable& symbolTable) {
                       << std::endl;
             symbolTable.addError("Undeclared symbol", lhsIdentifierNode->lineno);
         } else {
-            std::cout << "[DEBUG] LHS symbol '" << lhsSymbol->name << "' lineNr symbol declared: " <<  lhsSymbol->lineOfDeclaration
-                      << "but Assign declared node at: " << node->lineno << "' with type '" << lhsSymbol->type << "' found." << std::endl;
+            // std::cout << "[DEBUG] LHS symbol '" << lhsSymbol->name << "' lineNr symbol declared: " <<  lhsSymbol->lineOfDeclaration
+                             // << "but Assign declared node at: " << node->lineno << "' with type '" << lhsSymbol->type << "' found." << std::endl;
             if(lhsSymbol->lineOfDeclaration > node->lineno){
                 cout << "Variable used before declaration " << endl;
                 std::cerr << "@error at line " << lhsIdentifierNode->lineno 
@@ -931,7 +931,7 @@ void performSemanticAnalysis(Node* node, SymbolTable& symbolTable) {
             cout << "rhsExpressionNode->type here: " << rhsExpressionNode->type << endl;
             std::string rhsType = evaluateExpressionType(rhsExpressionNode, symbolTable);
             // If the RHS node itself is an identifier, ensure we use the type from the symbol table.
-            std::cout << "[DEBUG] RHS expression evaluated to type if Identifier we fix: " << rhsType << std::endl;
+            // std::cout << "[DEBUG] RHS expression evaluated to type if Identifier we fix: " << rhsType << std::endl;
             if (rhsExpressionNode->type == "Identifier") {
                 //symbolTable.enterScope(); // where do we enter scope
                 Symbol* rhsSym = symbolTable.findSymbol(rhsExpressionNode->value);
@@ -942,7 +942,7 @@ void performSemanticAnalysis(Node* node, SymbolTable& symbolTable) {
                     cout << "RECASTED!!" << endl;
                 }
             }
-            std::cout << "[DEBUG] RHS expression evaluated to type if Identifier we FIXED: " << rhsType << std::endl;
+            // std::cout << "[DEBUG] RHS expression evaluated to type if Identifier we FIXED: " << rhsType << std::endl;
 
     
             // 3. If LHS is declared, check for type mismatch
@@ -1003,8 +1003,8 @@ void performSemanticAnalysis(Node* node, SymbolTable& symbolTable) {
         }
     }
 
-    std::cout << "[DEBUG] Exiting node: Type='" << node->type
-              << "', Value='" << node->value << "'" << std::endl;
+    // std::cout << "[DEBUG] Exiting node: Type='" << node->type
+                             // << "', Value='" << node->value << "'" << std::endl;
 }
 
 
