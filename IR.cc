@@ -5,12 +5,9 @@
 #include <vector>
 #include <string>
 #include <set>
-#include <map>
-#include <functional>
 #include <algorithm>
 #include <regex>
 #include <queue>
-#include <stdexcept>
 #include <iomanip>
 
 std::string cleanType(const std::string &s) {
